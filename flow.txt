@@ -1,0 +1,56 @@
+---
+
+## 開発フロー (dev_flow.txt)
+
+```txt
+# 思い出再現 AI⽇記写真レイアウトジェネレーター – 開発フロー
+
+1. ブランチ戦略
+   - main      : 常にデプロイ可能な状態
+   - develop   : 次リリースに向けた統合ブランチ
+   - feat/*    : 機能実装
+   - bugfix/*  : バグ修正
+   - hotfix/*  : 本番緊急対応
+
+2. チケット管理
+   - GitHub Issues で機能要件をチケット化
+   - MoSCoW 分類をラベル管理 (Must/Should/Could/Wont)
+
+3. 開発サイクル
+   1) Issue 作成 → feat ブランチ切り
+   2) ローカルで実装 & `pytest` → `black` / `ruff` で整形
+   3) GitHub へ PR (draft 可)  
+      - PR テンプレートに「目的」「実装概要」「テスト」記載
+   4) CI (GitHub Actions)
+      - lint, type-check, unit-test, buildDocker
+   5) Code Review (1 ✔ required)
+   6) develop へマージ → staging 環境に自動デプロイ
+
+4. ステージング / 本番
+   - staging: Render.com / fly.io で自動デプロイ、Smoke Test
+   - 本番: `main` マージ & タグ付けで本番 Docker Image ビルド → Heroku / Railway へ
+
+5. 非同期ジョブ
+   - Celery Worker と Redis を docker-compose で起動
+   - レイアウト生成や PDF 書き出しを Task Queue へ dispatch
+
+6. バージョン管理
+   - Semantic Versioning (MAJOR.MINOR.PATCH)
+   - CHANGELOG.md を keep-a-changelog 形式で更新
+
+7. テスト方針
+   - Unit: モデル・レイアウト関数 (pytest)
+   - Integration: API エンドポイント (pytest + DRF test client)
+   - E2E: Playwright でアップロード → 生成 → DL の一連
+
+8. リリースノート
+   - GitHub Releases に生成 (Release Drafter)
+   - リリースごとに Docker Image を ghcr.io へ push
+
+9. セキュリティ
+   - `django-environ` で Secrets 管理
+   - Dependabot 有効化、毎週木曜に PR 自動作成
+
+10. ドキュメント
+    - Docstring から MkDocs Material で API docs 自動生成
+    - README, CONTRIBUTING, CODE_OF_CONDUCT を最新に保つ
