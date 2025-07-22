@@ -8,7 +8,6 @@ __pycache__/
 # Django
 *.log
 *.pot
-*.pyc
 *.sqlite3
 db.sqlite3
 
@@ -35,8 +34,8 @@ venv.bak/
 */migrations/*.pyc
 
 # Static and media files
-/staticfiles/
-/media/
+staticfiles/
+media/
 
 # Coverage reports
 htmlcov/
